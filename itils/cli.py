@@ -9,15 +9,16 @@ from .constants import INPUT_HELP, RESIZE_HELP
 
 # Based on: https://plac.readthedocs.io/en/latest/#implementing-subcommands
 class ItilsInterface(object):
-    commands = ["resize4gslides", "quit"]
+    commands = ["gslide", "quit"]
 
     def __init__(self):
-        self.__doc__ = f"{__description__}\n"
+        self.__doc__ = f"{__description__} ({__version__})\n"
 
     @plac.pos("input_img", help=INPUT_HELP, type=Path)
     @plac.pos("resize", help=RESIZE_HELP, type=int)
-    def resize4gslides(self, input_img, resize):
-        """Resize an image to be smaller than 25 megapixels for Google Slides."""
+    def gslide(self, input_img, resize):
+        """Resize an image to be smaller than 25 megapixels for Google Slides
+        (or another size)."""
         with Image(filename=input_img) as img:
             print("Original size:", img.size)
 
@@ -32,6 +33,7 @@ class ItilsInterface(object):
             print("New size:", img.size)
 
             img.save(filename=f"{input_img.stem}_output.png")
+            print("Done!")
 
     def quit(self):
         raise plac.Interpreter.Exit
@@ -52,7 +54,6 @@ class ItilsInterface(object):
 def console_scripts_main():
     # version: https://github.com/ialbert/plac/blob/master/plac_core.py#L411
     # plac.call(main, version=__version__)
-    plac.Interpreter.call(
-        ItilsInterface,
-        prompt="itils> ",
-    )
+
+    # plac.Interpreter(plac.call(ItilsInterface, version=__version__)).interact()
+    plac.Interpreter.call(ItilsInterface, prompt="itils> ")
