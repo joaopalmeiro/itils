@@ -29,7 +29,8 @@ class ItilsInterface(object):
             print(generate_size_message(img, "Original"))
 
             if resize is None:
-                print("Area")
+                # Resize `img` to have the specified area in pixels.
+                # Aspect ratio is preserved.
                 img.transform(resize=f"{THRESHOLD}@")
             else:
                 # -resize X% (70%, for example)
@@ -39,7 +40,6 @@ class ItilsInterface(object):
                 # img.resize(int(img.width * scaler), int(img.height * scaler))
 
                 # Option #2:
-                print("resize")
                 img.transform(resize=f"{resize}%")
 
             print(generate_size_message(img, "New"))
