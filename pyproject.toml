@@ -4,6 +4,9 @@ version = "0.0.1"
 description = "A Python CLI for transforming images."
 authors = ["João Palmeiro <joaommpalmeiro@gmail.com>"]
 license = "MIT"
+readme = "README.md"
+homepage = "https://github.com/joaopalmeiro/itils"
+repository = "https://github.com/joaopalmeiro/itils"
 
 [tool.poetry.dependencies]
 python = "^3.6"
