@@ -1,14 +1,15 @@
 from pathlib import Path
 
 import plac
+from halo import Halo
 from wand.image import Image
 
 from . import __description__, __version__
-from .constants import INPUT_HELP, RESIZE_HELP, THRESHOLD
+from .constants import INPUT_HELP, RESIZE_HELP, THRESHOLD, Log
 
 
 def generate_size_message(img: Image, prefix: str) -> str:
-    return f"{prefix} size: {img.size} • {img.size[0] * img.size[1]:,} megapixels"
+    return f"{prefix} size: {img.size} • {img.size[0] * img.size[1]:,} megapixels\n"
 
 
 # Based on: https://plac.readthedocs.io/en/latest/#implementing-subcommands
@@ -25,9 +26,14 @@ class ItilsInterface(object):
         Resize an image to be smaller than 25 megapixels for Google Slides.
         The image can be resized using an explicit percentage as well.
         """
+        spinner = Halo(text=Log.READ.value, spinner="arc")
+
+        spinner.start()
         with Image(filename=input_img) as img:
+            spinner.succeed()
             print(generate_size_message(img, "Original"))
 
+            spinner.start(Log.RESIZE.value)
             if resize is None:
                 # Resize `img` to have the specified area in pixels.
                 # Aspect ratio is preserved.
@@ -42,10 +48,15 @@ class ItilsInterface(object):
                 # Option #2:
                 img.transform(resize=f"{resize}%")
 
+            spinner.succeed()
             print(generate_size_message(img, "New"))
 
+            spinner.start(Log.SAVE.value)
             img.save(filename=f"{input_img.stem}_output.png")
-            print("✨ Done!")
+            spinner.succeed()
+            print(f"Filename: {input_img.stem}_output.png\n")
+
+            print("All done! ✨")
 
     def quit(self):
         raise plac.Interpreter.Exit
