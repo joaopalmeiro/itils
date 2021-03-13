@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "itils"
-version = "0.0.1"
+version = "0.1.0"
 description = "A Python CLI for transforming images."
 authors = ["João Palmeiro <joaommpalmeiro@gmail.com>"]
 license = "MIT"

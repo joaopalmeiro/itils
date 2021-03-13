@@ -11,8 +11,8 @@ Powered by [plac](https://github.com/ialbert/plac) (CLI), [Wand](https://github.
 
 ### Interactive mode
 
-```console
-pdfshot -i
+```text
+itils -i
 ```
 
 Run `quit` to close `itils`.
