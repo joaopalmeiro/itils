@@ -4,7 +4,11 @@ import plac
 from wand.image import Image
 
 from . import __description__, __version__
-from .constants import INPUT_HELP, RESIZE_HELP
+from .constants import INPUT_HELP, RESIZE_HELP, THRESHOLD
+
+
+def generate_size_message(img: Image, prefix: str) -> str:
+    return f"{prefix} size: {img.size} • {img.size[0] * img.size[1]:,} megapixels"
 
 
 # Based on: https://plac.readthedocs.io/en/latest/#implementing-subcommands
@@ -15,25 +19,33 @@ class ItilsInterface(object):
         self.__doc__ = f"{__description__} ({__version__})\n"
 
     @plac.pos("input_img", help=INPUT_HELP, type=Path)
-    @plac.pos("resize", help=RESIZE_HELP, type=int)
-    def gslide(self, input_img, resize):
-        """Resize an image to be smaller than 25 megapixels for Google Slides
-        (or another size)."""
+    @plac.opt("resize", help=RESIZE_HELP, type=int, metavar="PCT")
+    def gslide(self, input_img, resize=None):
+        """
+        Resize an image to be smaller than 25 megapixels for Google Slides.
+        The image can be resized using an explicit percentage as well.
+        """
         with Image(filename=input_img) as img:
-            print("Original size:", img.size)
+            print(generate_size_message(img, "Original"))
 
-            # -resize X% (70%, for example)
+            if resize is None:
+                print("Area")
+                img.transform(resize=f"{THRESHOLD}@")
+            else:
+                # -resize X% (70%, for example)
 
-            # Option #1:
-            # scaler = 0.7
-            # img.resize(int(img.width * scaler), int(img.height * scaler))
+                # Option #1:
+                # scaler = 0.7
+                # img.resize(int(img.width * scaler), int(img.height * scaler))
 
-            # Option #2:
-            img.transform(resize=f"{resize}%")
-            print("New size:", img.size)
+                # Option #2:
+                print("resize")
+                img.transform(resize=f"{resize}%")
+
+            print(generate_size_message(img, "New"))
 
             img.save(filename=f"{input_img.stem}_output.png")
-            print("Done!")
+            print("✨ Done!")
 
     def quit(self):
         raise plac.Interpreter.Exit
